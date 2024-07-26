@@ -14,12 +14,12 @@ timezone:
 # jekyll-seo-tag settings › https://github.com/jekyll/jekyll-seo-tag/blob/master/docs/usage.md
 # ↓ --------------------------
 
-title: Chirpy # the main title
+title: Bam0x7 # the main title
 
-tagline: A text-focused Jekyll theme # it will display as the sub-title
+tagline: Vulnerabillity Research # it will display as the sub-title
 
 description: >- # used by seo meta and the atom feed
-  A minimal, responsive and feature-rich Jekyll theme for technical writing.
+  Blog, Bam0x7, Cyber security, Linux kernel, windows kernel, Vulnerabillity Research
 
 # Fill in the protocol & hostname for your site.
 # e.g. 'https://username.github.io', note that it does not end with a '/'.
@@ -29,16 +29,16 @@ github:
   username: Bam0x7 # change to your github username
 
 twitter:
-  username: twitter_username # change to your twitter username
+  username: bam0x7 # change to your twitter username
 
 social:
   # Change to your full name.
   # It will be displayed as the default author of the posts and the copyright owner in the Footer
   name: Muhamad Ibnu Ruslan
-  email: example@domain.com # change to your email address
+  email: muhamadibnuruslan075@gmail.com # change to your email address
   links:
     # The first element serves as the copyright owner's link
-    - https://twitter.com/username # change to your twitter homepage
+    - https://x.com/bam0x7 # change to your twitter homepage
     - https://github.com/Bam0x7 # change to your github homepage
     # Uncomment below to add more social links
     # - https://www.facebook.com/username
@@ -96,7 +96,7 @@ theme_mode: # [light | dark]
 cdn:
 
 # the avatar on sidebar, support local or CORS resources
-avatar:
+avatar: "https://pbs.twimg.com/profile_images/1816681011964788736/f1c6EXc0_400x400.jpg"
 
 # The URL of the site-wide social preview image used in SEO `og:image` meta tag.
 # It can be overridden by a customized `page.image` in front matter.
