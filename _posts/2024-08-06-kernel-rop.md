@@ -7,6 +7,7 @@ categories: [linux-kernel-pwn]
 Introduction
 ---
 Exploitasi kernel linux, ketika saya pertama kali mendengar tentang topik itu. saya yakin itu adalah topik yang sulit dan menyeramkan untuk dipelajari tapi, banyak peneliti profesional diluar sana yang sudah mendokumentasikan hasil penemuan  dan POC mereka dengan detail teknis yang jelas. tapi tetap saja, diperlukan basis pengetahuan sampai level tertentu bagi pemula seperti saya untuk memahami tulisan mereka. bahkan jika anda siap untuk mengeluarkan uang, ada beberapa kursus yang spesifik untuk eksploitasi kernel linux dan android yang tentunya sangat mahal seperti yang ada di <a href="https://www.offensivecon.org/trainings/2024/exploiting-the-linux-kernel.html">link ini</a> , tentunya dipandu oleh peneliti yang sudah sangat berpengalaman dibidang tersebut. tapi bagi orang yang pas-pasan seperti saya, satu-satunya cara untuk mempelajari topik ini adalah dengan mencari sumber daya pembelajaran yang tersebar di internet. seperti tantangan kernel-ctf, yang salah satunya akan saya bahas kali ini. saya mendapatkan referensi dari <a href="https://lkmidas.github.io/posts/20210123-linux-kernel-pwn-part-1/?ref=0x434b.dev"> blog ini </a> sebagai panduan pertama saya untuk belajar tentang eksploitasi kernel linux, dan jika anda ingin dari 0 seperti membangun lingkungan debugging, silahkan lihat blog yang bagus <a href="https://scoding.de/linux-kernel-exploitation-environment">ini</a>.
+
 ---
 
 Menyiapkan lingkungan
@@ -636,6 +637,7 @@ int main()
 Kesimpulan
 ---
 pada tantangan kali ini, tentu saya hanya membahas bagian yang paling dasar, tanpa mengaktifkan satupun mitigasi seperti KASLR, SMEP, SMAP, KPTI. walaupun sebenarnya banyak mitigasi lain di kernel linux modern saat ini, seperti pengacakan daftar bebas, pengerasan daftar bebas,pengacakan cache kmalloc, pengerasan usercopy, KCFI dan lainnya. dikesempatan selanjutnya, saya akan menulis namun dengan tantangan lain dan juga belajar untuk melewati mitigasi satu persatu dan mungkin akan membahas topik yang lebih kompleks seperti teknik cross cache dan dirty page table. jika ada yang salah dari apa yang saya sampaikan ataupun ingin bertanya tentang tantangan kali ini, jangan sungkan untuk mengirim email, terima kasih.  
+
 ---
 
 Referensi
@@ -643,8 +645,6 @@ Referensi
 <a href="https://lkmidas.github.io/posts/20210123-linux-kernel-pwn-part-1/">https://lkmidas.github.io/posts/20210123-linux-kernel-pwn-part-1/</a>
 
 <a href="https://y3a.github.io/2021/06/11/hxpctf-kernelrop/">https://y3a.github.io/2021/06/11/hxpctf-kernelrop/</a>
-
-<a href="http://www.phrack.org/issues/49/14.html#article">http://www.phrack.org/issues/49/14.html#article</a>
 
 <a href="https://lwn.net/Articles/569635/">https://lwn.net/Articles/569635/</a>
 
