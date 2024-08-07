@@ -791,7 +791,7 @@ kita tekan "c" pada gdb, dan qemu akan menampilkan daftar address yang kita boco
 [*]leaked = 1032-> 0x408: 0xffffffff8113d33c
 ....
 ```
-ingat saat kita melakukan penulisan diluar batas sebelumnya? ketika mengirim data menggunakan write hingga menimpa RIP dengan vfs_write, saya yakin kali ini kita melakukan pembacaan diluar batas hingga membocorkan vfs_read. karena alamat kernel hanya hanya mengarah kesekitar 0xffffffff810000000, jadi dalam alamat RSP diatas, ada beberapa yang mengarah kealamat yang kita maksud seperti ```0xffffffff8113d33c```,```0xffffffff8113d6e3``` dan ```0xffffffff8113d775```.
+ingat saat kita melakukan penulisan diluar batas sebelumnya? ketika mengirim data menggunakan write hingga menimpa RIP dengan vfs_write, saya yakin kali ini kita melakukan pembacaan diluar batas hingga membocorkan vfs_read. karena alamat kernel hanya hanya mengarah kesekitar 0xffffffff810000000, jadi dalam alamat RSP diatas, ada beberapa yang mengarah ke alamat yang kita maksud seperti ```0xffffffff8113d33c```,```0xffffffff8113d6e3``` dan ```0xffffffff8113d775```.
 
 untuk memastikkannya, ayo kita sedikit ubah kode exploit kita yang sebelumnya untuk menghitung offset kernel base dan gadget rop lainnya:
 
@@ -885,7 +885,7 @@ pwndbg> x/3i 0xffffffff81800eb0
    0xffffffff81800eb7:	iretq
 
 ```
-kesimpulannya adalah adalah untuk memperbarui CR3, jadi sekilas sepertinya melompat ke lokasi berikutnya akan mengembalikan direktori halaman ke ruang pengguna walaupun data pada ruang stack kernel tidak dapat direferensikan. jadi, menyalin data yang awalnya ada di tumpukan kernel ke area yang dapat diakses bahkan setelah pembaruan CR3. kita harus melompat ke intruksi berikutnya dalam rop. agar rantai ROP berhasil.
+kesimpulannya adalah untuk memperbarui CR3, jadi sekilas sepertinya melompat ke lokasi berikutnya akan mengembalikan direktori halaman ke ruang pengguna walaupun data pada ruang stack kernel tidak dapat direferensikan. jadi, menyalin data yang awalnya ada di tumpukan kernel ke area yang dapat diakses bahkan setelah pembaruan CR3. kita harus melompat ke intruksi berikutnya dalam rop. agar rantai ROP berhasil.
 
 ini adalah kode exploit terakhir kita:
 ```c
@@ -1010,8 +1010,9 @@ int main()
     return EXIT_SUCCESS;
 }
 
-sebelum menjalankan exploitnya, kita harus kembali mengubah setidguid ke 1337 di rootfs/etc/init.d/S99pawnyable, aktifkan semua mitigasi pada run.sh
+
 ```
+sebelum menjalankan exploitnya, kita harus kembali mengubah setidguid ke 1337 di rootfs/etc/init.d/S99pawnyable, aktifkan semua mitigasi pada run.sh
 
 ```bash
 #!/bin/sh
