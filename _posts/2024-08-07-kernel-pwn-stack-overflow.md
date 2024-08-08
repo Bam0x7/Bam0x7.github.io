@@ -1022,7 +1022,7 @@ qemu-system-x86_64 \
     -kernel bzImage \
     -append "console=ttyS0 loglevel=3 oops=panic panic=-1 pti=1 kaslr" \
     -no-reboot \
-    -cpu qemu64,+smap,smep+ \
+    -cpu qemu64,+smap,+smep \
     -smp 1 \
     -monitor /dev/null \
     -initrd rootfs_updated.cpio \
