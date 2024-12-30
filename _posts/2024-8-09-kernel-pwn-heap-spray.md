@@ -40,7 +40,7 @@ flag yang kita kirim dibandingkan dengan flag ```0xDEAD0001```, jika benar. maka
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/heap-spray-load.jpg" alt="">
 
-dlam intruki itu, jika kita memasukkan flag ```0xDEAD0004```. ```k_buf``` dan ```u_buf``` akan dikirim ke kita menggunakan ```copy_to_user```
+dalam intruksi itu, jika kita memasukkan flag ```0xDEAD0004```. ```k_buf``` dan ```u_buf``` akan dikirim ke kita menggunakan ```copy_to_user```
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/heap-spray-store.jpg" alt="">
 
