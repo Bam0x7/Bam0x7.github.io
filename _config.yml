@@ -16,10 +16,10 @@ timezone:
 
 title: Bam0x7 # the main title
 
-tagline: Vulnerabillity Research # it will display as the sub-title
+tagline: Vulnerability Research # it will display as the sub-title
 
 description: >- # used by seo meta and the atom feed
-  Blog, Bam0x7, Cyber security, Linux kernel, windows kernel, Vulnerabillity Research
+  Blog, Bam0x7, Cyber security, Linux kernel, windows kernel, Vulnerability Research
 
 # Fill in the protocol & hostname for your site.
 # e.g. 'https://username.github.io', note that it does not end with a '/'.
