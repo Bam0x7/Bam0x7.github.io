@@ -48,7 +48,7 @@ if (copy_from_user(g_buf, buf, count)) {
 ...
 ```
 
-Ukuran buffer yang dialokasikan pada ```g_buf``` adalah 0x400 yang artinya akan ditempatkan di kmalloc-1024, periksa ```/pro/slabinfo``` untuk mengetahui lebih lanjut. untuk memanfaatkan hal ini, kita perlu objek kernel lain yang ditempatkan pada wadah kmalloc-1024 juga. kandidat yang cocok adalah objek ```tty_struct``` yang anda bisa periksa <a href="https://elixir.bootlin.com/linux/v5.15/source/include/linux/tty.h#L143">tty.h</a>, kita bisa menggunakan ```open(/dev/ptmx/)``` untuk mengalokasikan ```tts_struct```.
+Ukuran buffer yang dialokasikan pada ```g_buf``` adalah 0x400 yang artinya akan ditempatkan di kmalloc-1024, periksa ```/proc/slabinfo``` untuk mengetahui lebih lanjut. untuk memanfaatkan hal ini, kita perlu objek kernel lain yang ditempatkan pada wadah kmalloc-1024 juga. kandidat yang cocok adalah objek ```tty_struct``` yang anda bisa periksa <a href="https://elixir.bootlin.com/linux/v5.15/source/include/linux/tty.h#L143">tty.h</a>, kita bisa menggunakan ```open(/dev/ptmx/)``` untuk mengalokasikan ```tts_struct```.
 
 ---
 
